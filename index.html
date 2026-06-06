@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idaho Endowment Fund — LIVE Board Dashboard (Round 2 · CSF/ROMC)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+  :root{--wine:#8B0000;--wine-soft:#f3e1e1;--ink:#1f2328;--muted:#5b6168;--line:#e2e4e8;--bg:#fff;--paper:#faf8f6;
+   --good:#1a7f4b;--good-bg:#e6f4ec;--bad:#b3261e;--bad-bg:#fbe9e7;--warn:#9a6700;--warn-bg:#fdf3d8;}
+  *{box-sizing:border-box;}
+  body{font-family:'Be Vietnam Pro',Arial,sans-serif;color:var(--ink);background:var(--paper);margin:0;padding:22px;line-height:1.45;}
+  .sheet{max-width:1140px;margin:0 auto;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:24px 28px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--wine);padding-bottom:10px;gap:12px;}
+  h1{font-size:18px;margin:0;color:var(--wine);font-weight:700;}
+  .sub{font-size:11px;color:var(--muted);margin-top:3px;}
+  .asof{text-align:right;font-size:11px;color:var(--muted);white-space:nowrap;}
+  .live{display:inline-block;font-size:10px;font-weight:700;color:#fff;background:var(--good);padding:2px 9px;border-radius:10px;}
+  .live .d{display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;margin-right:5px;animation:p 1.6s infinite;vertical-align:middle;}
+  @keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+  .csf{display:inline-block;font-size:9px;font-weight:700;color:var(--wine);background:var(--wine-soft);padding:1px 7px;border-radius:8px;margin-left:7px;vertical-align:middle;}
+  .band{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin:14px 0;}
+  .headline{background:var(--wine-soft);border-left:4px solid var(--wine);padding:12px 15px;border-radius:6px;font-size:13px;}
+  .headline b{color:var(--wine);}
+  .decisions{background:#fff;border:1.5px solid var(--wine);border-radius:8px;padding:7px 13px;}
+  .decisions h3{margin:2px 0 5px;font-size:10.5px;text-transform:uppercase;color:var(--wine);letter-spacing:.5px;}
+  .decisions li{font-size:11.5px;margin:4px 0;list-style:none;} .decisions ul{margin:0;padding:0;}
+  .pill{font-size:9px;font-weight:700;padding:1px 7px;border-radius:9px;margin-right:5px;}
+  .p-act{background:var(--bad-bg);color:var(--bad);} .p-watch{background:var(--warn-bg);color:var(--warn);} .p-ok{background:var(--good-bg);color:var(--good);}
+  .csfchips{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:2px 0 14px;}
+  .chipk{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:7px 10px;}
+  .chipk .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
+  .chipk .v{font-size:15px;font-weight:700;margin-top:1px;}
+  .chipk .s{font-size:9.5px;margin-top:1px;font-weight:600;}
+  .ok{color:var(--good);} .bad{color:var(--bad);} .warn{color:var(--warn);}
+  .ctrl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:9px 14px;margin-bottom:14px;font-size:11.5px;}
+  .ctrl label{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.3px;margin-right:5px;}
+  .seg{display:inline-flex;border:1px solid var(--wine);border-radius:14px;overflow:hidden;}
+  .seg button{border:none;background:#fff;color:var(--wine);font-size:11px;font-weight:600;padding:4px 11px;cursor:pointer;font-family:inherit;}
+  .seg button.on{background:var(--wine);color:#fff;}
+  .ctrl input[type=range]{accent-color:var(--wine);vertical-align:middle;}
+  .alertbar{display:none;background:var(--bad-bg);border:1px solid var(--bad);color:var(--bad);font-size:11.5px;border-radius:7px;padding:7px 12px;margin-bottom:12px;font-weight:600;}
+  .alertbar.show{display:block;}
+  h2{font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--wine);border-bottom:1px solid var(--line);padding-bottom:4px;margin:18px 0 8px;}
+  table{width:100%;border-collapse:collapse;font-size:11.5px;}
+  th,td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--line);}
+  th:first-child,td:first-child{text-align:left;}
+  thead th{font-size:9.5px;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);border-bottom:1.5px solid var(--ink);}
+  .num{font-variant-numeric:tabular-nums;}
+  .cell-good{background:var(--good-bg);} .cell-bad{background:var(--bad-bg);}
+  .flag{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;}
+  .f-ok{background:var(--good-bg);color:var(--good);} .f-watch{background:var(--warn-bg);color:var(--warn);} .f-rev{background:var(--bad-bg);color:var(--bad);}
+  tr.mgr{cursor:pointer;} tr.mgr:hover{background:#fcf8f6;}
+  tr.detail td{background:#f8f4f1;font-size:10.5px;color:var(--muted);text-align:left;}
+  .bar{height:13px;background:#eee;border-radius:7px;position:relative;overflow:hidden;min-width:120px;}
+  .bar .fill{position:absolute;left:0;top:0;bottom:0;background:var(--wine);opacity:.75;border-radius:7px;}
+  .bar .tgt{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .whatif{background:#f6f3ef;border:1px dashed var(--wine);border-radius:8px;padding:11px 15px;margin-top:14px;}
+  .whatif h3{margin:0 0 7px;font-size:10.5px;text-transform:uppercase;color:var(--wine);letter-spacing:.5px;}
+  .wrow{display:flex;gap:18px;flex-wrap:wrap;align-items:center;font-size:11.5px;}
+  .wimpact{margin-top:8px;font-size:12px;background:#fff;border:1px solid var(--line);border-radius:7px;padding:8px 12px;}
+  .assure{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;font-size:10.5px;margin-top:13px;}
+  .assure>div{background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:7px 10px;}
+  .assure b{display:block;font-size:9px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+  .foot{margin-top:14px;border-top:1px solid var(--line);padding-top:7px;font-size:9px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;}
+  .spark{vertical-align:middle;}
+  button.reset{border:1px solid var(--wine);background:#fff;color:var(--wine);border-radius:12px;font-size:10.5px;padding:3px 11px;cursor:pointer;font-family:inherit;}
+  button.reset:hover{background:var(--wine);color:#fff;}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="top">
+    <div>
+      <h1>Idaho Endowment Fund — Board Decision Dashboard <span class="live"><span class="d"></span>LIVE</span></h1>
+      <div class="sub">Round 2 · built from the CSF/ROMC specification — every element traces to a CSF; every control below actually works.</div>
+    </div>
+    <div class="asof"><b>As of 30 Apr 2026</b> · last tick: <span id="tick">—</span><br>Simulated feed for demo · production: custodian / data-warehouse API</div>
+  </div>
+
+  <div class="band">
+    <div class="headline" id="headline"></div>
+    <div class="decisions">
+      <h3>Decisions required <span style="color:var(--muted);font-weight:400">(auto-flagged)</span></h3>
+      <ul id="decList"></ul>
+    </div>
+  </div>
+
+  <div class="csfchips" id="chips"></div>
+
+  <div class="ctrl">
+    <span><label>Period</label>
+      <span class="seg" id="segPeriod">
+        <button data-p="m1" class="on">1 Mo</button><button data-p="fytd">FYTD</button><button data-p="y1">1 Yr</button><button data-p="y3">3 Yr</button>
+      </span>
+    </span>
+    <span><label>Alert if gap &lt;</label> −<span id="thrV">50</span> bps
+      <input type="range" id="thr" min="10" max="200" step="10" value="50">
+    </span>
+    <span style="color:var(--muted);font-size:10px">ROMC-Controls: filters & thresholds steer the page · click any manager row to drill down (ROMC-Operations)</span>
+  </div>
+  <div class="alertbar" id="alertbar"></div>
+
+  <h2>Performance vs policy benchmark <span class="csf">CSF 1</span><span class="csf" style="background:#eef3fb;color:#28507c">DATA → INFORMATION</span></h2>
+  <table>
+    <thead><tr><th>Sleeve</th><th id="perH">Return (1 Mo)</th><th>Benchmark</th><th>Gap (bps)</th><th>24-mo trend (memory)</th><th>Signal</th></tr></thead>
+    <tbody id="perfBody"></tbody>
+  </table>
+
+  <div class="grid2">
+    <div>
+      <h2>Allocation vs policy bands <span class="csf">CSF 2</span></h2>
+      <table>
+        <thead><tr><th>Sleeve</th><th style="text-align:left">Actual vs target*</th><th>Var (pp)</th><th>Status</th></tr></thead>
+        <tbody id="allocBody"></tbody>
+      </table>
+    </div>
+    <div>
+      <h2>Spending & liquidity <span class="csf">CSF 3</span></h2>
+      <table>
+        <thead><tr><th>Indicator</th><th>Current</th><th>Policy</th><th>Status</th></tr></thead>
+        <tbody id="spendBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2>Manager governance — return · risk · cost in one place <span class="csf">CSF 4</span><span class="csf">CSF 5</span><span class="csf" style="background:#eef3fb;color:#28507c">INFORMATION → KNOWLEDGE</span></h2>
+  <table>
+    <thead><tr><th>Manager (click to drill down)</th><th>FYTD</th><th>vs Bmk 3yr</th><th>Fee bps*</th><th>On list*</th><th>Status</th></tr></thead>
+    <tbody id="mgrBody"></tbody>
+  </table>
+
+  <div class="whatif">
+    <h3>Decision assurance — what-if scenarios (ROMC-Operations) <span class="csf" style="background:#eef3fb;color:#28507c">KNOWLEDGE → WISDOM → ACTION</span></h3>
+    <div class="wrow">
+      <span>Equity shock: <b id="eqV">0%</b><br><input type="range" id="eqS" min="-30" max="10" step="5" value="0"></span>
+      <span>Rate shock: <b id="rtV">0 bp</b><br><input type="range" id="rtS" min="-100" max="200" step="25" value="0"></span>
+      <button class="reset" id="resetW">Reset scenario</button>
+    </div>
+    <div class="wimpact" id="wimpact"></div>
+  </div>
+
+  <div class="assure">
+    <div><b>Process & sign-off</b>Staff recommendation 2 May → Investment Committee 5 May → Board ratification pending.</div>
+    <div><b>Traceability</b>Each decision links to its CSF and decision log #2026-04-11…13; assumptions documented.</div>
+    <div><b>Reversibility</b>CBRE review is a study, not a termination; watch-list entries auto-expire after 12 months on recovery.</div>
+    <div><b>Memory</b>10-yr return & benchmark history, fee schedules, decision log — one click from every figure.</div>
+  </div>
+
+  <div class="foot">
+    <span>BUS625 S3 Round-2 LIVE redesign · 80/20 top band · 1/3–2/3 sections · CSF-tagged · value chain labelled data→info→knowledge→wisdom→action · emotional design: calm-by-default, alarm only when a decision is needed (signal-first colour, pulsing LIVE for confidence, pre-agreed playbooks to reduce decision anxiety) · * = illustrative placeholder, request actuals from IDL · live tick is a simulated feed for demonstration</span>
+    <span>Anchor data: FIB Preliminary Report 30 Apr 2026 · efib.idaho.gov</span>
+  </div>
+</div>
+
+<script>
+// ================= DATA (anchors from the real 30 Apr 2026 report; * = illustrative) =================
+const P={m1:'1 Mo',fytd:'FYTD',y1:'1 Yr',y3:'3 Yr'};
+const SLEEVES=[
+ {n:'Total Fund',f:{m1:6.6,fytd:12.3,y1:20.7,y3:13.0},b:{m1:6.7,fytd:13.7,y1:21.9,y3:13.6},bold:1,seed:3},
+ {n:'Equity',f:{m1:9.9,fytd:17.4,y1:30.5,y3:19.1},b:{m1:10.2,fytd:19.4,y1:32.1,y3:20.3},seed:5},
+ {n:'Fixed income',f:{m1:0.2,fytd:3.7,y1:4.9,y3:4.0},b:{m1:0.1,fytd:3.2,y1:4.1,y3:3.5},seed:7},
+ {n:'Real estate (31 Mar)',f:{m1:0,fytd:0.4,y1:0.4,y3:-4.0},b:{m1:0.6,fytd:2.0,y1:2.9,y3:-4.2},seed:9}];
+const ALLOC=[
+ {n:'US equity',a:37.8,t:37.0,band:5},
+ {n:'Global + int’l equity',a:29.5,t:29.0,band:4},
+ {n:'Bonds',a:22.1,t:24.0,band:3},
+ {n:'Real estate + cash',a:10.7,t:10.0,band:3}];
+const MGRS=[
+ {n:'Barrow Hanley — SC value',fytd:78.5,rel:12.0,fee:62,age:'—',st:'RETAIN',attr:'Selection +11.2 / Allocation +0.8*'},
+ {n:'Boston Partners — LC value',fytd:21.9,rel:3.5,fee:38,age:'—',st:'RETAIN',attr:'Selection +2.9 / Allocation +0.6*'},
+ {n:'Sycamore — MC value',fytd:14.4,rel:-4.6,fee:55,age:'2 mo',st:'WATCH',attr:'Selection −4.1 / Allocation −0.5*'},
+ {n:'PineStone — global growth',fytd:14.5,rel:-6.1,fee:48,age:'4 mo',st:'WATCH',attr:'Selection −5.7 / Allocation −0.4*'},
+ {n:'WCM — int’l growth',fytd:3.8,rel:-12.6,fee:60,age:'6 mo',st:'WATCH',attr:'Selection −11.9 / Allocation −0.7*'},
+ {n:'CBRE — core real estate',fytd:-3.9,rel:0,fee:95,age:'8 mo',st:'REVIEW',attr:'Lagged private mark; fee outlier*'}];
+const BASE={fund:3987.1,eqShare:0.673,bdShare:0.221,duration:6.0,runway:14,spend:3.1,real:4.6};
+let period='m1', thr=50, eq=0, rt=0, liveDelta=0, tickN=0;
+
+// ================= HELPERS =================
+const $=id=>document.getElementById(id);
+const fm=(x,d=1)=>x.toFixed(d);
+function spark(seed,end){ // deterministic 24-pt series ending near `end`
+  let pts=[],v=end-2.5;
+  for(let i=0;i<24;i++){ v+=Math.sin(seed*3+i*1.7)*0.9+0.11; pts.push(v); }
+  const mn=Math.min(...pts),mx=Math.max(...pts),W=110,H=22;
+  const path=pts.map((p,i)=>(i?'L':'M')+fm(i*(W/23),1)+','+fm(H-( (p-mn)/(mx-mn||1) )*H,1)).join(' ');
+  return '<svg class="spark" width="'+W+'" height="'+H+'"><path d="'+path+'" fill="none" stroke="#8B0000" stroke-width="1.4" opacity=".8"/></svg>';
+}
+function shockedFund(){
+  const eqPart=BASE.fund*BASE.eqShare*(1+eq/100+liveDelta);
+  const bdPart=BASE.fund*BASE.bdShare*(1-rt*BASE.duration/10000);
+  const rest=BASE.fund*(1-BASE.eqShare-BASE.bdShare);
+  return eqPart+bdPart+rest;
+}
+// ================= RENDERERS =================
+function render(){
+  const fund=shockedFund(), dF=fund-BASE.fund;
+  const shocked=(eq!==0||rt!==0);
+  // headline (80/20)
+  $('headline').innerHTML='<b>So what:</b> Fund <b>$'+fm(fund,1)+'M</b>'+(shocked?' <span class="bad">(scenario: '+(dF>=0?'+':'')+fm(dF,0)+'M vs base)</span>':' (+$234.3M, +6.6% month)')+
+   ' — trailing benchmark by <b>10 bps</b>. Equities drove gains but lagged on growth managers. Risk '+(shocked&&outOfBand()>0?'<b class="bad">'+outOfBand()+' sleeve(s) out of band</b>':'in band')+
+   '; spending sustainable; <b>1 manager for review, 2 on watch</b>.';
+  // decisions (auto-flagged)
+  let dec=['<li><span class="pill p-act">ACT</span>Commission CBRE replacement review</li>',
+           '<li><span class="pill p-watch">WATCH</span>Confirm WCM & PineStone watch status</li>'];
+  dec.push(outOfBand()>0?'<li><span class="pill p-act">ACT</span>Rebalance trigger fires — '+outOfBand()+' sleeve(s) out of band</li>'
+                        :'<li><span class="pill p-ok">RATIFY</span>Hold allocation — all sleeves in band</li>');
+  $('decList').innerHTML=dec.join('');
+  // CSF chips
+  const runway=Math.max(4,Math.round(BASE.runway*fund/BASE.fund));
+  $('chips').innerHTML=
+   chip('CSF 1 · Performance','−10 bps','vs benchmark (mo.)','bad')+
+   chip('CSF 2 · Risk',outOfBand()>0?outOfBand()+' out':'In band',outOfBand()>0?'rebalance trigger*':'all sleeves in band*',outOfBand()>0?'bad':'ok')+
+   chip('CSF 3 · Spending',fm(BASE.spend*BASE.fund/fund,1)+'%','vs ≤5% policy*','ok')+
+   chip('CSF 4 · Cost','52 bps','vs peer 47*','warn')+
+   chip('CSF 5 · Governance','3 flags','1 review · 2 watch','warn');
+  renderPerf(); renderAlloc(fund); renderSpend(fund,runway); renderMgrs(); renderImpact(fund,dF,runway);
+}
+function chip(l,v,s,cls){return '<div class="chipk"><div class="l">'+l+'</div><div class="v num '+cls+'">'+v+'</div><div class="s '+cls+'">'+s+'</div></div>';}
+function outOfBand(){
+  return ALLOC.filter(a=>{const adj=a.n.includes('equity')?a.a*(1+eq/100):(a.n==='Bonds'?a.a*(1-rt*BASE.duration/10000):a.a);
+    return Math.abs(adj-a.t)>a.band;}).length;
+}
+function renderPerf(){
+  $('perH').textContent='Return ('+P[period]+')';
+  let alerts=0,rows='';
+  SLEEVES.forEach(s=>{
+    const f=s.f[period],b=s.b[period],gap=Math.round((f-b)*100);
+    const bad=gap<0, alert=gap< -thr; if(alert)alerts++;
+    rows+='<tr'+(s.bold?' style="font-weight:700"':'')+'><td>'+s.n+(alert?' ⚠️':'')+'</td>'+
+     '<td class="num '+(bad?'cell-bad':'cell-good')+'">'+fm(f)+'%</td><td class="num">'+fm(b)+'%</td>'+
+     '<td class="num '+(bad?'bad':'ok')+'">'+(gap>0?'+':'')+gap+'</td>'+
+     '<td>'+spark(s.seed,f)+'</td>'+
+     '<td><span class="flag '+(alert?'f-rev':(bad?'f-watch':'f-ok'))+'">'+(alert?'ALERT':(bad?'LAG':'BEAT'))+'</span></td></tr>';
+  });
+  $('perfBody').innerHTML=rows;
+  const ab=$('alertbar');
+  if(alerts>0){ab.classList.add('show');ab.textContent='⚠ '+alerts+' sleeve(s) breach the −'+thr+' bps alert threshold for '+P[period]+' — attribution drill-down recommended before the meeting.';}
+  else ab.classList.remove('show');
+}
+function renderAlloc(fund){
+  let rows='';
+  ALLOC.forEach(a=>{
+    const adj=a.n.includes('equity')?a.a*(1+eq/100):(a.n==='Bonds'?a.a*(1-rt*BASE.duration/10000):a.a);
+    const v=adj-a.t, out=Math.abs(v)>a.band;
+    rows+='<tr><td>'+a.n+'</td><td style="text-align:left"><div class="bar"><div class="fill" style="width:'+(adj*2)+'%"></div><div class="tgt" style="left:'+(a.t*2)+'%"></div></div></td>'+
+     '<td class="num '+(out?'bad':'')+'">'+(v>0?'+':'')+fm(v)+'</td>'+
+     '<td><span class="flag '+(out?'f-rev':'f-ok')+'">'+(out?'OUT OF BAND':'IN BAND')+'</span></td></tr>';
+  });
+  $('allocBody').innerHTML=rows;
+}
+function renderSpend(fund,runway){
+  const sp=BASE.spend*BASE.fund/fund, real=BASE.real+(fund-BASE.fund)/BASE.fund*100*0.3;
+  $('spendBody').innerHTML=
+   row2('Spending rate*',fm(sp,1)+'%','≤ 5.0%',sp<=5)+
+   row2('Real return after spend (3yr)*',(real>=0?'+':'')+fm(real,1)+'%','> 0%',real>0)+
+   row2('Liquidity runway*',runway+' months','≥ 6 months',runway>=6);
+}
+function row2(n,v,p,ok){return '<tr><td>'+n+'</td><td class="num">'+v+'</td><td class="num">'+p+'</td><td><span class="flag '+(ok?'f-ok':'f-rev')+'">'+(ok?'OK':'BREACH')+'</span></td></tr>';}
+function renderMgrs(){
+  let rows='';
+  MGRS.forEach((m,i)=>{
+    const cls=m.st==='RETAIN'?'f-ok':(m.st==='WATCH'?'f-watch':'f-rev');
+    rows+='<tr class="mgr" onclick="tog('+i+')"><td>▸ '+m.n+'</td><td class="num'+(m.fytd<0?' bad':'')+'">'+fm(m.fytd)+'%</td>'+
+     '<td class="num '+(m.rel<0?'bad':(m.rel>0?'ok':''))+'">'+(m.rel>0?'+':'')+(m.rel===0?'n/a':fm(m.rel))+'</td>'+
+     '<td class="num">'+m.fee+'</td><td class="num">'+m.age+'</td><td><span class="flag '+cls+'">'+m.st+'</span></td></tr>'+
+     '<tr class="detail" id="det'+i+'" style="display:none"><td colspan="6">Attribution: '+m.attr+' · Net-of-fee 3-yr rank: '+(i+2)+'/16* · History, fee schedule and decision-log entries one click away in production (ROMC-Memory).</td></tr>';
+  });
+  $('mgrBody').innerHTML=rows;
+}
+function renderImpact(fund,dF,runway){
+  const shocked=(eq!==0||rt!==0);
+  $('wimpact').innerHTML= shocked
+   ? '<b>Scenario impact:</b> fund $'+fm(fund,1)+'M ('+(dF>=0?'+':'')+fm(dF,0)+'M) · '+(outOfBand()>0?'<span class="bad"><b>rebalance trigger fires ('+outOfBand()+' sleeve(s) out of band)</b></span>':'allocation still in band')+' · runway '+runway+' months ('+(runway>=6?'<span class="ok">above floor — distributions safe</span>':'<span class="bad">below floor — pause discretionary commitments</span>')+'). <span style="color:var(--muted)">Pre-agreed playbook: if equity −15% or worse → freeze new private commitments, rebalance from bonds, no forced sales.</span>'
+   : 'Move the sliders to stress the portfolio. <span style="color:var(--muted)">Base case: all CSFs within policy; pre-agreed playbooks exist for −15% equity and +200 bp rate scenarios — the board never improvises.</span>';
+}
+window.tog=i=>{const d=$('det'+i);d.style.display=d.style.display==='none'?'table-row':'none';};
+// ================= CONTROLS =================
+document.querySelectorAll('#segPeriod button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#segPeriod button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); period=b.dataset.p; renderPerf();
+});
+$('thr').oninput=e=>{thr=+e.target.value;$('thrV').textContent=thr;renderPerf();};
+$('eqS').oninput=e=>{eq=+e.target.value;$('eqV').textContent=(eq>0?'+':'')+eq+'%';render();};
+$('rtS').oninput=e=>{rt=+e.target.value;$('rtV').textContent=(rt>0?'+':'')+rt+' bp';render();};
+$('resetW').onclick=()=>{eq=0;rt=0;$('eqS').value=0;$('rtS').value=0;$('eqV').textContent='0%';$('rtV').textContent='0 bp';render();};
+// simulated live tick (clearly labelled): tiny bounded market wiggle on the fund value
+setInterval(()=>{ tickN++; liveDelta=Math.sin(tickN/3)*0.0008;
+  const t=new Date(); $('tick').textContent=t.toLocaleTimeString();
+  if(eq===0&&rt===0){ const f=shockedFund();
+    $('headline').innerHTML='<b>So what:</b> Fund <b>$'+f.toFixed(1)+'M</b> (+$234.3M, +6.6% month) — trailing benchmark by <b>10 bps</b>. Equities drove gains but lagged on growth managers. Risk in band; spending sustainable; <b>1 manager for review, 2 on watch</b>.'; }
+},4000);
+render();
+</script>
+</body>
+</html>
