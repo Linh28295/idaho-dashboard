@@ -27,7 +27,7 @@
   .decisions li{font-size:11.5px;margin:4px 0;list-style:none;} .decisions ul{margin:0;padding:0;}
   .pill{font-size:9px;font-weight:700;padding:1px 7px;border-radius:9px;margin-right:5px;}
   .p-act{background:var(--bad-bg);color:var(--bad);} .p-watch{background:var(--warn-bg);color:var(--warn);} .p-ok{background:var(--good-bg);color:var(--good);}
-  .csfchips{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:2px 0 14px;}
+  .csfchips{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:2px 0 14px;}
   .chipk{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:7px 10px;}
   .chipk .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
   .chipk .v{font-size:15px;font-weight:700;margin-top:1px;}
@@ -144,7 +144,7 @@
     </div>
   </div>
 
-  <h2>Attribution &amp; distribution coverage <span class="csf">CSF 1</span><span class="csf">CSF 6</span><span class="csf" style="background:#eef3fb;color:#28507c">NEW — FUND-MGMT LENS</span></h2>
+  <h2>Attribution &amp; distribution coverage <span class="csf">CSF 1</span><span class="csf">CSF 3</span><span class="csf" style="background:#eef3fb;color:#28507c">NEW — FUND-MGMT LENS</span></h2>
   <div class="assure" style="grid-template-columns:repeat(3,1fr);margin-top:4px">
     <div>
       <b>Active return, decomposed (month)*</b>
@@ -250,10 +250,9 @@ function render(){
   $('chips').innerHTML=
    chip('CSF 1 · Performance','−10 bps','vs benchmark (mo.)','bad')+
    chip('CSF 2 · Risk',outOfBand()>0?outOfBand()+' out':'In band',outOfBand()>0?'rebalance trigger*':'all sleeves in band*',outOfBand()>0?'bad':'ok')+
-   chip('CSF 3 · Spending',fm(BASE.spend*BASE.fund/fund,2)+'%','vs ≤4% policy*','ok')+
+   chip('CSF 3 · Spending',fm(BASE.spend*BASE.fund/fund,2)+'%','vs ≤5% policy','ok')+
    chip('CSF 4 · Cost','52 bps','vs peer 47*','warn')+
-   chip('CSF 5 · Governance','3 flags','1 review · 2 watch','warn')+
-   chip('CSF 6 · Concentration','~80%','of active alpha from one manager*','warn');
+   chip('CSF 5 · Governance','3 flags','1 review · 2 watch · ~80% of alpha from one manager*','warn');
   renderPerf(); renderAlloc(fund); renderSpend(fund,runway); renderMgrs(); renderImpact(fund,dF,runway);
 }
 function chip(l,v,s,cls){return '<div class="chipk"><div class="l">'+l+'</div><div class="v num '+cls+'">'+v+'</div><div class="s '+cls+'">'+s+'</div></div>';}
@@ -292,7 +291,7 @@ function renderAlloc(fund){
 function renderSpend(fund,runway){
   const sp=BASE.spend*BASE.fund/fund, real=BASE.real+(fund-BASE.fund)/BASE.fund*100*0.3;
   $('spendBody').innerHTML=
-   row2('Spending rate*',fm(sp,1)+'%','≤ 4.0%*',sp<=4)+
+   row2('Spending rate*',fm(sp,1)+'%','≤ 5.0%',sp<=5)+
    row2('Real return after spend (3yr)*',(real>=0?'+':'')+fm(real,1)+'%','> 0%',real>0)+
    row2('Liquidity runway*',runway+' months','≥ 6 months',runway>=6);
 }
