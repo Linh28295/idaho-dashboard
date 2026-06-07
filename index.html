@@ -27,7 +27,7 @@
   .decisions li{font-size:11.5px;margin:4px 0;list-style:none;} .decisions ul{margin:0;padding:0;}
   .pill{font-size:9px;font-weight:700;padding:1px 7px;border-radius:9px;margin-right:5px;}
   .p-act{background:var(--bad-bg);color:var(--bad);} .p-watch{background:var(--warn-bg);color:var(--warn);} .p-ok{background:var(--good-bg);color:var(--good);}
-  .csfchips{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:2px 0 14px;}
+  .csfchips{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:2px 0 14px;}
   .chipk{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:7px 10px;}
   .chipk .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
   .chipk .v{font-size:15px;font-weight:700;margin-top:1px;}
@@ -144,6 +144,25 @@
     </div>
   </div>
 
+  <h2>Attribution &amp; distribution coverage <span class="csf">CSF 1</span><span class="csf">CSF 6</span><span class="csf" style="background:#eef3fb;color:#28507c">NEW — FUND-MGMT LENS</span></h2>
+  <div class="assure" style="grid-template-columns:repeat(3,1fr);margin-top:4px">
+    <div>
+      <b>Active return, decomposed (month)*</b>
+      <div style="font-size:12px;margin-top:4px">Allocation <b class="ok">+0.2pp</b> · Selection <b class="bad">−0.3pp</b> → Active <b>−0.1pp</b></div>
+      <div style="font-size:9.5px;color:var(--muted);margin-top:3px">The fix is manager selection, not the policy mix — Brinson split tells the Board which lever to pull. Staff to compute officially.</div>
+    </div>
+    <div>
+      <b>Who funds the distributions?</b>
+      <div style="font-size:12px;margin-top:4px"><b style="font-size:17px;color:var(--good)">61%</b> of FYTD payouts covered by land revenue alone ($56.6M of $92.7M)</div>
+      <div style="font-size:9.5px;color:var(--muted);margin-top:3px">Coverage ratio = (land revenue + portfolio income) / distributions — target &gt;1.0×. The natural hedge: operating cash, uncorrelated to markets.</div>
+    </div>
+    <div>
+      <b>Sustainability, as a probability*</b>
+      <div style="font-size:12px;margin-top:4px"><b style="font-size:17px;color:var(--good)">≈78%</b> chance of preserving real corpus over 10 yrs at current spending (Monte Carlo)</div>
+      <div style="font-size:9.5px;color:var(--muted);margin-top:3px">One number beats three scenarios. Honest deflator: education-cost inflation (≈CPI+1pp) trims the real buffer to ≈2.9pp.</div>
+    </div>
+  </div>
+
   <h2>Manager governance — return · risk · cost in one place <span class="csf">CSF 4</span><span class="csf">CSF 5</span><span class="csf" style="background:#eef3fb;color:#28507c">INFORMATION → KNOWLEDGE</span></h2>
   <table>
     <thead><tr><th>Manager (click to drill down)</th><th>FYTD</th><th>vs Bmk 3yr</th><th>Fee bps*</th><th>On list*</th><th>Status</th></tr></thead>
@@ -169,7 +188,7 @@
 
   <div class="foot">
     <span>BUS625 S3 Round-2 LIVE redesign · strategic layer first (mission & decade) above operational detail (month) · 80/20 top band · 1/3–2/3 sections · CSF-tagged · value chain labelled data→info→knowledge→wisdom→action · emotional design: calm-by-default, alarm only when a decision is needed (signal-first colour, pulsing LIVE for confidence, pre-agreed playbooks to reduce decision anxiety) · * = illustrative placeholder, request actuals from IDL · live tick is a simulated feed for demonstration</span>
-    <span>Anchor data: FIB Preliminary Report 30 Apr 2026 · efib.idaho.gov</span>
+    <span>Anchor data: FIB Preliminary Report 30 Apr 2026 · efib.idaho.gov · aligned with Group 2 R2 slides v2</span>
   </div>
 </div>
 
@@ -184,7 +203,7 @@ const SLEEVES=[
 const ALLOC=[
  {n:'US equity',a:37.8,t:37.0,band:5},
  {n:'Global + int’l equity',a:29.5,t:29.0,band:4},
- {n:'Bonds',a:22.1,t:24.0,band:3},
+ {n:'Bonds',a:22.0,t:24.0,band:3},
  {n:'Real estate + cash',a:10.7,t:10.0,band:3}];
 const MGRS=[
  {n:'Barrow Hanley — SC value',fytd:78.5,rel:12.0,fee:62,age:'—',st:'RETAIN',attr:'Selection +11.2 / Allocation +0.8*'},
@@ -193,7 +212,7 @@ const MGRS=[
  {n:'PineStone — global growth',fytd:14.5,rel:-6.1,fee:48,age:'4 mo',st:'WATCH',attr:'Selection −5.7 / Allocation −0.4*'},
  {n:'WCM — int’l growth',fytd:3.8,rel:-12.6,fee:60,age:'6 mo',st:'WATCH',attr:'Selection −11.9 / Allocation −0.7*'},
  {n:'CBRE — core real estate',fytd:-3.9,rel:0,fee:95,age:'8 mo',st:'REVIEW',attr:'Lagged private mark; fee outlier*'}];
-const BASE={fund:3987.1,eqShare:0.673,bdShare:0.221,duration:6.0,runway:14,spend:3.1,real:4.6};
+const BASE={fund:3987.1,eqShare:0.673,bdShare:0.220,duration:6.0,runway:14,spend:2.76,real:4.6};
 let period='m1', thr=50, eq=0, rt=0, liveDelta=0, tickN=0;
 
 // ================= HELPERS =================
@@ -231,9 +250,10 @@ function render(){
   $('chips').innerHTML=
    chip('CSF 1 · Performance','−10 bps','vs benchmark (mo.)','bad')+
    chip('CSF 2 · Risk',outOfBand()>0?outOfBand()+' out':'In band',outOfBand()>0?'rebalance trigger*':'all sleeves in band*',outOfBand()>0?'bad':'ok')+
-   chip('CSF 3 · Spending',fm(BASE.spend*BASE.fund/fund,1)+'%','vs ≤5% policy*','ok')+
+   chip('CSF 3 · Spending',fm(BASE.spend*BASE.fund/fund,2)+'%','vs ≤4% policy*','ok')+
    chip('CSF 4 · Cost','52 bps','vs peer 47*','warn')+
-   chip('CSF 5 · Governance','3 flags','1 review · 2 watch','warn');
+   chip('CSF 5 · Governance','3 flags','1 review · 2 watch','warn')+
+   chip('CSF 6 · Concentration','~80%','of active alpha from one manager*','warn');
   renderPerf(); renderAlloc(fund); renderSpend(fund,runway); renderMgrs(); renderImpact(fund,dF,runway);
 }
 function chip(l,v,s,cls){return '<div class="chipk"><div class="l">'+l+'</div><div class="v num '+cls+'">'+v+'</div><div class="s '+cls+'">'+s+'</div></div>';}
@@ -272,7 +292,7 @@ function renderAlloc(fund){
 function renderSpend(fund,runway){
   const sp=BASE.spend*BASE.fund/fund, real=BASE.real+(fund-BASE.fund)/BASE.fund*100*0.3;
   $('spendBody').innerHTML=
-   row2('Spending rate*',fm(sp,1)+'%','≤ 5.0%',sp<=5)+
+   row2('Spending rate*',fm(sp,1)+'%','≤ 4.0%*',sp<=4)+
    row2('Real return after spend (3yr)*',(real>=0?'+':'')+fm(real,1)+'%','> 0%',real>0)+
    row2('Liquidity runway*',runway+' months','≥ 6 months',runway>=6);
 }
