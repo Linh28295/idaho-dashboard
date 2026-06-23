@@ -27,7 +27,7 @@
   .decisions li{font-size:11.5px;margin:4px 0;list-style:none;} .decisions ul{margin:0;padding:0;}
   .pill{font-size:9px;font-weight:700;padding:1px 7px;border-radius:9px;margin-right:5px;}
   .p-act{background:var(--bad-bg);color:var(--bad);} .p-watch{background:var(--warn-bg);color:var(--warn);} .p-ok{background:var(--good-bg);color:var(--good);}
-  .csfchips{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:2px 0 14px;}
+  .csfchips{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:2px 0 14px;}
   .chipk{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:7px 10px;}
   .chipk .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
   .chipk .v{font-size:15px;font-weight:700;margin-top:1px;}
@@ -74,7 +74,7 @@
   <div class="top">
     <div>
       <h1>Idaho Endowment Fund — Board Decision Dashboard <span class="live"><span class="d"></span>LIVE</span></h1>
-      <div class="sub">Round 2 · built from the CSF/ROMC specification — every element traces to a CSF; every control below actually works.</div>
+      <div class="sub">Round 2 · built from the 6-CSF / ROMC specification — every element traces to a CSF; every control below actually works.</div>
     </div>
     <div class="asof"><b>As of 30 Apr 2026</b> · last tick: <span id="tick">—</span><br>Simulated feed for demo · production: custodian / data-warehouse API</div>
   </div>
@@ -163,7 +163,7 @@
     </div>
   </div>
 
-  <h2>Manager governance — return · risk · cost in one place <span class="csf">CSF 4</span><span class="csf">CSF 5</span><span class="csf" style="background:#eef3fb;color:#28507c">INFORMATION → KNOWLEDGE</span></h2>
+  <h2>Manager governance — return · risk · cost in one place <span class="csf">CSF 4</span><span class="csf">CSF 5</span><span class="csf">CSF 6</span><span class="csf" style="background:#eef3fb;color:#28507c">INFORMATION → KNOWLEDGE</span></h2>
   <table>
     <thead><tr><th>Manager (click to drill down)</th><th>FYTD</th><th>vs Bmk 3yr</th><th>Fee bps*</th><th>On list*</th><th>Status</th></tr></thead>
     <tbody id="mgrBody"></tbody>
@@ -188,7 +188,7 @@
 
   <div class="foot">
     <span>BUS625 S3 Round-2 LIVE redesign · strategic layer first (mission & decade) above operational detail (month) · 80/20 top band · 1/3–2/3 sections · CSF-tagged · value chain labelled data→info→knowledge→wisdom→action · emotional design: calm-by-default, alarm only when a decision is needed (signal-first colour, pulsing LIVE for confidence, pre-agreed playbooks to reduce decision anxiety) · policy targets verified vs Callan FY2025 Performance Review (all sleeves within rebalancing ranges); * = remaining illustrative items (fees, bands) · live tick is a simulated feed for demonstration</span>
-    <span>Anchor data: FIB Preliminary Report 30 Apr 2026 · efib.idaho.gov · aligned with Group 2 R2 slides v2</span>
+    <span>Anchor data: FIB Preliminary Report 30 Apr 2026 · efib.idaho.gov · aligned with Group 2 R2 redesign deck (FINAL · 6-CSF)</span>
   </div>
 </div>
 
@@ -203,14 +203,14 @@ const SLEEVES=[
 const ALLOC=[
  {n:'US equity',a:37.8,t:37.0,band:5},
  {n:'Global + int’l equity',a:29.5,t:29.0,band:4},
- {n:'Bonds',a:22.0,t:24.0,band:3},
+ {n:'Bonds',a:22.1,t:24.0,band:3},
  {n:'Real estate + cash',a:10.7,t:10.0,band:3}];
 const MGRS=[
  {n:'Barrow Hanley — SC value',fytd:78.5,rel:12.0,fee:62,age:'—',st:'RETAIN',attr:'Selection +11.2 / Allocation +0.8*'},
  {n:'Boston Partners — LC value',fytd:21.9,rel:3.5,fee:38,age:'—',st:'RETAIN',attr:'Selection +2.9 / Allocation +0.6*'},
  {n:'Sycamore — MC value',fytd:14.4,rel:-4.6,fee:55,age:'2 mo',st:'WATCH',attr:'Selection −4.1 / Allocation −0.5*'},
  {n:'PineStone — global growth',fytd:14.5,rel:-6.1,fee:48,age:'4 mo',st:'WATCH',attr:'Selection −5.7 / Allocation −0.4*'},
- {n:'WCM — int’l growth',fytd:3.8,rel:-12.6,fee:60,age:'6 mo',st:'WATCH',attr:'Selection −11.9 / Allocation −0.7*'},
+ {n:'WCM — int’l growth',fytd:3.8,rel:0.5,fee:60,age:'6 mo',st:'WATCH',attr:'FYTD active −12.6 (Selection −11.9 / Allocation −0.7); 3-yr rel +0.5*'},
  {n:'CBRE — core real estate',fytd:-3.9,rel:0,fee:95,age:'8 mo',st:'REVIEW',attr:'Lagged private mark; fee outlier*'}];
 const BASE={fund:3987.1,eqShare:0.673,bdShare:0.220,duration:6.0,runway:14,spend:2.76,real:4.6};
 let period='m1', thr=50, eq=0, rt=0, liveDelta=0, tickN=0;
@@ -252,7 +252,8 @@ function render(){
    chip('CSF 2 · Risk',outOfBand()>0?outOfBand()+' out':'In band',outOfBand()>0?'rebalance trigger*':'all sleeves in band*',outOfBand()>0?'bad':'ok')+
    chip('CSF 3 · Spending',fm(BASE.spend*BASE.fund/fund,2)+'%','vs ≤5% policy','ok')+
    chip('CSF 4 · Cost','34 bps','audited FY24 total cost (0.34% of fund)','ok')+
-   chip('CSF 5 · Governance','3 flags','1 review · 2 watch · ~80% of alpha from one manager*','warn');
+   chip('CSF 5 · Accountability','3 flags','1 review · 2 watch · audit log live','warn')+
+   chip('CSF 6 · Diversified alpha','~80%*','alpha from 1 mgr · >30% conc. cap','warn');
   renderPerf(); renderAlloc(fund); renderSpend(fund,runway); renderMgrs(); renderImpact(fund,dF,runway);
 }
 function chip(l,v,s,cls){return '<div class="chipk"><div class="l">'+l+'</div><div class="v num '+cls+'">'+v+'</div><div class="s '+cls+'">'+s+'</div></div>';}
